@@ -1,0 +1,153 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/ThemeToggle';
+---
+
+<Layout title="How to Run BIP-110 | Installation Guide" description="Step-by-step guide to installing and running a BIP-110 enabled Bitcoin node">
+  <main class="min-h-screen">
+    <div class="absolute top-6 right-6 z-20">
+      <ThemeToggle client:load />
+    </div>
+
+    <section class="py-24 px-6">
+      <div class="max-w-4xl mx-auto">
+        <a href="/" class="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to BIP-110
+        </a>
+
+        <h1 class="text-4xl font-bold mb-4">How to Run BIP-110</h1>
+        <p class="text-xl text-muted-foreground mb-12">
+          Support BIP-110 by running a node that signals for activation. Choose your preferred installation method below.
+        </p>
+
+        <div class="space-y-8">
+          <Card>
+            <CardHeader>
+              <div class="flex items-center justify-between">
+                <CardTitle>Bitcoin Knots (Direct Download)</CardTitle>
+                <Badge variant="default">Recommended</Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p class="text-muted-foreground">
+                Download the BIP-110 enabled Bitcoin Knots release directly from GitHub.
+              </p>
+              <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p class="font-medium">Installation steps:</p>
+                <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>Download the release for your platform from the GitHub releases page</li>
+                  <li>Verify the download signatures (recommended)</li>
+                  <li>Replace your existing Bitcoin Core/Knots installation</li>
+                  <li>Start your node - it will automatically begin signaling for BIP-110</li>
+                </ol>
+              </div>
+              <a
+                href="https://github.com/dathonohm/bitcoin/releases/tag/v29.2.knots20251110%2Bbip110-v0.1rc2"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              >
+                Download from GitHub
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Start9</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p class="text-muted-foreground">
+                One-click install for Start9 servers running v0.3 or v0.4.
+              </p>
+              <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p class="font-medium">Installation steps:</p>
+                <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>Download the .s9pk file from the releases page</li>
+                  <li>In your Start9 UI, go to System → Sideload</li>
+                  <li>Upload the .s9pk file</li>
+                  <li>Install and configure as you would any Start9 service</li>
+                </ol>
+              </div>
+              <a
+                href="https://github.com/dathonohm/knots-startos/releases/tag/v29.2.knots20251110%2Bbip110-v0.1rc2"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              >
+                Download for Start9
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div class="flex items-center justify-between">
+                <CardTitle>Umbrel</CardTitle>
+                <Badge variant="secondary">PR Pending</Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p class="text-muted-foreground">
+                A pull request has been submitted to the Umbrel community app store and is pending approval.
+              </p>
+              <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p class="font-medium">Current status:</p>
+                <p class="text-sm text-muted-foreground">
+                  Once approved, you'll be able to install BIP-110 Bitcoin Knots directly from the Umbrel app store. In the meantime, you can follow the PR progress or build from source.
+                </p>
+              </div>
+              <a
+                href="https://github.com/getumbrel/umbrel-apps/pull/4237"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 border border-input bg-background rounded-md hover:bg-accent transition-colors"
+              >
+                View Pull Request
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </CardContent>
+          </Card>
+
+          <Card className="opacity-60">
+            <CardHeader>
+              <div class="flex items-center justify-between">
+                <CardTitle>myNode</CardTitle>
+                <Badge variant="outline">Coming Soon</Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p class="text-muted-foreground">
+                Support for myNode is in development. Check back soon for installation instructions.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div class="mt-16 pt-8 border-t border-border">
+          <h2 class="text-2xl font-bold mb-4">Need Help?</h2>
+          <p class="text-muted-foreground mb-4">
+            If you encounter any issues or have questions about running BIP-110, you can:
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+            <li>Open an issue on the <a href="https://github.com/dathonohm/bitcoin/issues" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">GitHub repository</a></li>
+            <li>Read the full <a href="https://github.com/dathonohm/bips/blob/reduced-data/bip-0110.mediawiki" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">BIP-110 specification</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
