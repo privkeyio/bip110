@@ -8,7 +8,7 @@ import { faqItems } from "@/lib/content";
 
 export function FAQ() {
   return (
-    <section className="py-24 px-6 bg-muted/30">
+    <section id="faq" className="py-24 px-6 bg-muted/30">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-4">
           Common Questions
