@@ -32,4 +32,5 @@ preview branch="": build
       branch="preview"
     fi
 
+    echo "Deploying to branch: $branch"
     npx --yes wrangler pages deploy dist --project-name bip110 --branch "$branch"

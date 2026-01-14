@@ -179,9 +179,9 @@ export const installOptions = [
   },
   {
     platform: "myNode",
-    description: "Coming soon for myNode users",
-    link: null,
-    status: "coming",
+    description: "Community app for myNode servers",
+    link: "https://github.com/mynodebtc/mynode/pull/982",
+    status: "pending",
     icon: "box",
   },
 ];
