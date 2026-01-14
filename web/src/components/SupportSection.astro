@@ -1,0 +1,80 @@
+---
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { installOptions } from '@/lib/content';
+
+const icons = {
+  download: `<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`,
+  server: `<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>`,
+  cloud: `<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>`,
+  box: `<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>`,
+};
+
+const statusLabels = {
+  available: null,
+  pending: "PR Pending",
+  coming: "Coming Soon",
+};
+---
+
+<section id="run" class="py-24 px-6 bg-muted/30">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-4">Run BIP-110</h2>
+    <p class="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+      Support BIP-110 by running a node that signals for activation
+    </p>
+
+    <div class="grid sm:grid-cols-2 gap-6">
+      {installOptions.map((option) => {
+        const isClickable = option.link !== null;
+        const CardWrapper = isClickable ? 'a' : 'div';
+        const statusLabel = statusLabels[option.status as keyof typeof statusLabels];
+
+        return (
+          <CardWrapper
+            href={isClickable ? option.link : undefined}
+            target={isClickable ? "_blank" : undefined}
+            rel={isClickable ? "noopener noreferrer" : undefined}
+            class={isClickable ? "block group" : "block opacity-60"}
+          >
+            <Card className={`h-full border-border/50 bg-card/50 backdrop-blur transition-colors ${isClickable ? 'group-hover:border-primary/30' : ''}`}>
+              <CardContent className="pt-6">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Fragment set:html={icons[option.icon as keyof typeof icons]} />
+                  </div>
+                  {statusLabel && (
+                    <Badge variant="secondary" className="text-xs">
+                      {statusLabel}
+                    </Badge>
+                  )}
+                </div>
+                <h3 class="font-semibold mb-2 flex items-center gap-2">
+                  {option.platform}
+                  {isClickable && (
+                    <svg class="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  )}
+                </h3>
+                <p class="text-sm text-muted-foreground">{option.description}</p>
+              </CardContent>
+            </Card>
+          </CardWrapper>
+        );
+      })}
+    </div>
+
+    <div class="mt-8 text-center">
+      <a
+        href="/howto"
+        class="inline-flex items-center justify-center gap-2 text-primary hover:underline"
+      >
+        View detailed installation instructions
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
