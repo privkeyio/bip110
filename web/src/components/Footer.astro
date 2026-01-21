@@ -26,6 +26,14 @@ import { bipMeta } from '@/lib/content';
         <span>By {bipMeta.author}</span>
         <span>•</span>
         <span>{bipMeta.license}</span>
+        <span>•</span>
+        <a
+          href={bipMeta.pgpKeyUrl}
+          class="font-mono text-xs hover:text-primary transition-colors"
+          title="PGP Public Key"
+        >
+          {bipMeta.pgpFingerprint.slice(-19)}
+        </a>
       </div>
     </div>
   </div>

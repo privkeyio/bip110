@@ -7,6 +7,9 @@ export const bipMeta = {
   layer: "Consensus (soft fork)",
   created: "2025-12-03",
   license: "BSD-3-Clause",
+  pgpFingerprint: "2B97 F032 9374 4D70 F6BB A82F 2E3A 66FF 67F9 8B4F",
+  pgpKeyUrl: "/.well-known/dathonohm.asc",
+  npub: "npub1azrgrnlmutgxvvjnrtvsn6npm6a08vqz0n0k3k4kf226sv2n93ls4ajl96",
 };
 
 export const abstract =
