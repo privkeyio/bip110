@@ -176,14 +176,14 @@ export const installOptions = [
   {
     platform: "Umbrel",
     description: "One-click install from the Umbrel app store",
-    link: "https://github.com/getumbrel/umbrel-apps/pull/4237",
+    link: "/howto#umbrel",
     status: "available",
     icon: "cloud",
   },
   {
     platform: "myNode",
     description: "One-click install for myNode servers",
-    link: "https://github.com/mynodebtc/mynode/pull/986",
+    link: "/howto#mynode",
     status: "available",
     icon: "box",
   },
