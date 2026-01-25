@@ -3,8 +3,12 @@ dev:
     cd web && npm run dev
 
 # build the site
-build:
+build: install
     cd web && npm run build
+
+# install dependencies
+install:
+    cd web && npm install
 
 # deploy to cloudflare pages (production)
 deploy branch="master": build
