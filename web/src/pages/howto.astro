@@ -165,6 +165,57 @@ import { ThemeToggle } from '@/components/ThemeToggle';
             </CardContent>
           </Card>
           </div>
+
+          <div id="parmanode">
+          <Card>
+            <CardHeader>
+              <CardTitle>Parmanode</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p class="text-muted-foreground">
+                Simple one-click style install for Parmanode users.
+              </p>
+              <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p class="font-medium">Installation steps:</p>
+                <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>Make sure you have the latest Parmanode version</li>
+                  <li>Install Bitcoin using Parmanode</li>
+                  <li>Select BIP-110 when the option appears during installation</li>
+                </ol>
+              </div>
+            </CardContent>
+          </Card>
+          </div>
+
+          <div id="docker">
+          <Card>
+            <CardHeader>
+              <CardTitle>Docker</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p class="text-muted-foreground">
+                For advanced users running their own Docker infrastructure. Uses the same GUIX-built binaries as Umbrel.
+              </p>
+              <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p class="font-medium">Docker image:</p>
+                <code class="block bg-background rounded px-3 py-2 text-sm font-mono break-all">
+                  ghcr.io/retropex/bitcoin:29.2.knots20251110-bip110-RC3
+                </code>
+              </div>
+              <a
+                href="https://github.com/Retropex/docker-bitcoind-prebuilt/pkgs/container/bitcoin/647778380?tag=29.2.knots20251110-bip110-RC3"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              >
+                View on GitHub Container Registry
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </CardContent>
+          </Card>
+          </div>
         </div>
 
         <div class="mt-16 pt-8 border-t border-border">
