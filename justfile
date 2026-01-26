@@ -10,6 +10,10 @@ build: install
 install:
     cd web && npm install
 
+# update all dependencies
+update:
+    cd web && npm update
+
 # deploy to cloudflare pages (production)
 deploy branch="master": build
     cd web && npx --yes wrangler pages deploy dist --project-name bip110 --branch "{{branch}}"
