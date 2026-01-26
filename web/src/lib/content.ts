@@ -169,7 +169,7 @@ export const installOptions = [
   {
     platform: "Start9",
     description: "One-click install for Start9 v0.3 and v0.4",
-    link: "https://github.com/dathonohm/knots-startos/releases/tag/v29.2.knots20251110%2Bbip110-v0.1rc3",
+    link: "/howto#start9",
     status: "available",
     icon: "server",
   },
