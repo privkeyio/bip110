@@ -1,6 +1,6 @@
 # development server
 dev:
-    cd web && npm run dev
+    cd web && npm run dev -- --open
 
 # build the site
 build: install
