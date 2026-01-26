@@ -120,4 +120,43 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    scroll-behavior: smooth;
+  }
 }
+
+/* Accordion animation - Base UI pattern */
+[data-slot="accordion-panel"] {
+  overflow: hidden;
+}
+
+[data-slot="accordion-panel"][data-open] {
+  animation: accordion-open 300ms ease-out;
+}
+
+[data-slot="accordion-panel"][data-ending-style] {
+  animation: accordion-close 300ms ease-out;
+}
+
+@keyframes accordion-open {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--accordion-panel-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-close {
+  from {
+    height: var(--accordion-panel-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
