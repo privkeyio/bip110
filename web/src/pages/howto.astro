@@ -63,23 +63,42 @@ import { ThemeToggle } from '@/components/ThemeToggle';
             </CardHeader>
             <CardContent className="space-y-4">
               <p class="text-muted-foreground">
-                One-click install for Start9 servers. Download the package for your StartOS version.
+                Install from the BIP-110 registry or download the package directly for your StartOS version.
               </p>
               <div class="bg-muted/50 rounded-lg p-4 space-y-3">
-                <p class="font-medium">Installation steps:</p>
+                <p class="font-medium">Option A: Install from Registry (StartOS 0.3.5.1)</p>
+                <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>Go to System and click 5 times on "Manage" to unlock dev tools</li>
+                  <li>Go to Marketplace → Change → Add Custom Registry</li>
+                  <li>Paste <code class="bg-background rounded px-1">https://start9.bip110.dev</code> and click "Save and Connect"</li>
+                  <li>Click on Bitcoin → "Bitcoin Knots (BIP-110 UASF)" → Reinstall</li>
+                </ol>
+              </div>
+              <div class="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p class="font-medium">Option B: Sideload</p>
                 <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
                   <li>Download the .s9pk file for your StartOS version</li>
                   <li>In your Start9 UI, go to System → Sideload</li>
                   <li>Upload the .s9pk file</li>
-                  <li>Install and configure as you would any Start9 service</li>
                 </ol>
               </div>
-              <div class="flex flex-wrap gap-3">
+              <div class="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                <a
+                  href="https://start9.bip110.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors w-full sm:w-auto"
+                >
+                  Install from Store
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
                 <a
                   href="https://github.com/dathonohm/knots-startos/releases/tag/v29.2.knots20251110%2Bbip110-v0.1rc3"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors w-full sm:w-auto"
                 >
                   Download for StartOS 0.3.5.1
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +109,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
                   href="https://github.com/dathonohm/knots-startos/releases/tag/v29.2.knots20251110%2Bbip110-v0.1rc3-startos0.4.0"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors w-full sm:w-auto"
                 >
                   Download for StartOS 0.4
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
