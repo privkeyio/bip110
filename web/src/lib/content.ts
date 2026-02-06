@@ -98,7 +98,7 @@ export const faqItems = [
   {
     question: "Is there any risk of funds being frozen or lost?",
     answer:
-      "In theory, yes, but this proposal goes to great pains to avoid affecting any known use cases. Funds are completely unaffected if they don't use Taproot, use Taproot in standard ways, or can be spent via keypath or other expected Tapleaves. A two-week grace period between lock-in and activation gives users time to migrate any affected funds.",
+      "In theory, yes, but this proposal goes to great pains to avoid affecting any known use cases. Funds are completely unaffected if they don't use Taproot, use Taproot in standard ways, or can be spent via keypath or other expected Tapleaves. Additionally, UTXOs created before activation are permanently exempt from the new rules — they can be spent at any time without restriction. A separate two-week grace period between lock-in and activation also provides general preparation time.",
     category: "safety",
   },
   {
@@ -172,7 +172,8 @@ export const timeline = [
   {
     date: "2 weeks post lock-in",
     event: "Activation",
-    description: "New rules take effect. Grace period allows users to prepare.",
+    description:
+      "New rules take effect for newly created UTXOs only. Pre-existing UTXOs remain permanently exempt.",
   },
   {
     date: "~1 year after activation",
@@ -225,7 +226,7 @@ export const tradeoffs = {
     {
       title: "Wallet Compatibility",
       description:
-        "Some wallets using Miniscript may create Tapleaves with OP_IF. The grace period and exemption for pre-existing UTXOs mitigates this risk.",
+        "Some wallets using Miniscript may create Tapleaves with OP_IF. UTXOs created before activation are permanently exempt, so existing funds are unaffected regardless of wallet software. The two-week grace period before activation also gives wallet developers time to update.",
       severity: "low",
     },
     {
