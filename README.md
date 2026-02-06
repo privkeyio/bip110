@@ -26,8 +26,6 @@ just deploy
 just preview
 ```
 
-Preview deployments are available at `<branch-name>.bip110.pages.dev`
-
-## GitHub Actions (Cloudflare Pages via Wrangler)
+## GitHub Actions (Cloudflare Workers via Wrangler)
 
 This repo deploys previews for every PR update and deploys production on pushes to `master`.
