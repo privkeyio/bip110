@@ -40,8 +40,8 @@ export function HowItWorks() {
         </div>
 
         <p className="text-sm text-muted-foreground text-center mt-8">
-          Inputs spending UTXOs created before activation are exempt from these
-          rules.
+          Inputs spending UTXOs created before activation are permanently exempt
+          from these rules — there is no deadline to move existing funds.
         </p>
       </div>
     </section>

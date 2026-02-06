@@ -98,7 +98,7 @@ export const faqItems = [
   {
     question: "Is there any risk of funds being frozen or lost?",
     answer:
-      "In theory, yes, but this proposal goes to great pains to avoid affecting any known use cases. Funds are completely unaffected if they don't use Taproot, use Taproot in standard ways, or can be spent via keypath or other expected Tapleaves. A two-week grace period between lock-in and activation gives users time to migrate any affected funds.",
+      "In theory, yes, but this proposal goes to great pains to avoid affecting any known use cases. Funds are completely unaffected if they don't use Taproot, use Taproot in standard ways, or can be spent via keypath or other expected Tapleaves. Additionally, UTXOs created before activation are permanently exempt from the new rules — they can be spent at any time without restriction. A separate two-week grace period between lock-in and activation also provides general preparation time.",
     category: "safety",
   },
   {
@@ -131,6 +131,30 @@ export const faqItems = [
       "No. Spam is best fought with policy/filters, not consensus. This softfork minimizes the impact of malicious miners and closes the worst-case risks, while sending a clear message that data storage is not a supported use case.",
     category: "general",
   },
+  {
+    question: "Does this affect the UTXO set?",
+    answer:
+      "No. BIP-110 only limits the size of new outputs going forward — it doesn't touch, invalidate, or prune any existing UTXOs. You may be thinking of \"The Cat,\" a separate proposal that would blacklist specific non-monetary UTXOs (like Ordinals and Stamps) and make them permanently unspendable so nodes can prune them. BIP-110 takes a completely different approach: instead of retroactively invalidating existing outputs, it simply limits the size of new ones to discourage future abuse.",
+    category: "technical",
+  },
+  {
+    question: "Does this affect the Lightning Network?",
+    answer:
+      "No. Standard Lightning channels use P2WSH (witness v0), and BIP-110's OP_IF restriction only applies to Tapscripts — so they're completely unaffected. Newer Taproot-based channels split conditional paths into separate tapleaves instead of using OP_IF, so they're also compatible. Both P2WSH and P2TR outputs are exactly 34 bytes, within the limit.",
+    category: "safety",
+  },
+  {
+    question: "How is this different from relay policy filters?",
+    answer:
+      "Relay policy (mempool filtering) only affects transaction propagation — miners can still include anything they want in blocks. BIP-110 enforces limits at the consensus level, meaning blocks containing oversized data are invalid regardless of who mines them. Policy is a suggestion; consensus is a rule.",
+    category: "technical",
+  },
+  {
+    question: "What happens when the deployment expires?",
+    answer:
+      "After approximately one year (52,416 blocks), all restrictions automatically lift and Bitcoin returns to its pre-activation rules. No action is needed from users or node operators. If the community wants to continue or refine the protections, a new proposal would need to go through the activation process again.",
+    category: "general",
+  },
 ];
 
 export const timeline = [
@@ -148,7 +172,8 @@ export const timeline = [
   {
     date: "2 weeks post lock-in",
     event: "Activation",
-    description: "New rules take effect. Grace period allows users to prepare.",
+    description:
+      "New rules take effect for newly created UTXOs only. Pre-existing UTXOs remain permanently exempt.",
   },
   {
     date: "~1 year after activation",
@@ -201,7 +226,7 @@ export const tradeoffs = {
     {
       title: "Wallet Compatibility",
       description:
-        "Some wallets using Miniscript may create Tapleaves with OP_IF. The grace period and exemption for pre-existing UTXOs mitigates this risk.",
+        "Some wallets using Miniscript may create Tapleaves with OP_IF. UTXOs created before activation are permanently exempt, so existing funds are unaffected regardless of wallet software. The two-week grace period before activation also gives wallet developers time to update.",
       severity: "low",
     },
     {
