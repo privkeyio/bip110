@@ -131,6 +131,30 @@ export const faqItems = [
       "No. Spam is best fought with policy/filters, not consensus. This softfork minimizes the impact of malicious miners and closes the worst-case risks, while sending a clear message that data storage is not a supported use case.",
     category: "general",
   },
+  {
+    question: "Does this affect the UTXO set?",
+    answer:
+      "No. BIP-110 only limits the size of new outputs going forward — it doesn't touch, invalidate, or prune any existing UTXOs. You may be thinking of \"The Cat,\" a separate proposal that would blacklist specific non-monetary UTXOs (like Ordinals and Stamps) and make them permanently unspendable so nodes can prune them. BIP-110 takes a completely different approach: instead of retroactively invalidating existing outputs, it simply limits the size of new ones to discourage future abuse.",
+    category: "technical",
+  },
+  {
+    question: "Does this affect the Lightning Network?",
+    answer:
+      "No. Standard Lightning channels use P2WSH (witness v0), and BIP-110's OP_IF restriction only applies to Tapscripts — so they're completely unaffected. Newer Taproot-based channels split conditional paths into separate tapleaves instead of using OP_IF, so they're also compatible. Both P2WSH and P2TR outputs are exactly 34 bytes, within the limit.",
+    category: "safety",
+  },
+  {
+    question: "How is this different from relay policy filters?",
+    answer:
+      "Relay policy (mempool filtering) only affects transaction propagation — miners can still include anything they want in blocks. BIP-110 enforces limits at the consensus level, meaning blocks containing oversized data are invalid regardless of who mines them. Policy is a suggestion; consensus is a rule.",
+    category: "technical",
+  },
+  {
+    question: "What happens when the deployment expires?",
+    answer:
+      "After approximately one year (52,416 blocks), all restrictions automatically lift and Bitcoin returns to its pre-activation rules. No action is needed from users or node operators. If the community wants to continue or refine the protections, a new proposal would need to go through the activation process again.",
+    category: "general",
+  },
 ];
 
 export const timeline = [
