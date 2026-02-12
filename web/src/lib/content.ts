@@ -134,7 +134,7 @@ export const faqItems = [
   {
     question: "Does this affect the UTXO set?",
     answer:
-      "No. BIP-110 only limits the size of new outputs going forward — it doesn't touch, invalidate, or prune any existing UTXOs. You may be thinking of \"The Cat,\" a separate proposal that would blacklist specific non-monetary UTXOs (like Ordinals and Stamps) and make them permanently unspendable so nodes can prune them. BIP-110 takes a completely different approach: instead of retroactively invalidating existing outputs, it simply limits the size of new ones to discourage future abuse.",
+      'No. BIP-110 only limits the size of new outputs going forward — it doesn\'t touch, invalidate, or prune any existing UTXOs. You may be thinking of "The Cat," a separate proposal that would blacklist specific non-monetary UTXOs (like Ordinals and Stamps) and make them permanently unspendable so nodes can prune them. BIP-110 takes a completely different approach: instead of retroactively invalidating existing outputs, it simply limits the size of new ones to discourage future abuse.',
     category: "technical",
   },
   {

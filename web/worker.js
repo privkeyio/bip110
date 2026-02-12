@@ -4,7 +4,10 @@ export default {
 
     // redirect www and bip-110.com → bip110.org
     if (url.hostname !== "bip110.org") {
-      return Response.redirect(`https://bip110.org${url.pathname}${url.search}`, 301);
+      return Response.redirect(
+        `https://bip110.org${url.pathname}${url.search}`,
+        301,
+      );
     }
 
     // serve static assets

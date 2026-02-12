@@ -33,3 +33,24 @@ tf-plan:
 # apply terraform changes
 tf-apply:
     cd terraform && terraform apply
+
+# ------------------------------------------------------------------------------
+# format
+# ------------------------------------------------------------------------------
+
+# format all code
+[group('format')]
+@fmt:
+    just fmt-web && just fmt-tf
+
+# format web code
+[group('format'), private]
+[working-directory: 'web']
+fmt-web:
+    npx prettier --write .
+
+# format terraform code
+[group('format'), private]
+[working-directory: 'terraform']
+fmt-tf:
+    terraform fmt
