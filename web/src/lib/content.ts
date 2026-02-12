@@ -144,10 +144,22 @@ export const faqItems = [
     category: "safety",
   },
   {
+    question: "Why is OP_IF restricted in Tapscripts?",
+    answer:
+      "Taproot was designed so that each conditional branch lives in its own tapleaf. This is the entire point of MAST (Merklized Alternative Script Trees). Using OP_IF inside a tapleaf is redundant: it reveals unused branches on-chain, defeating Taproot's privacy benefits. In some cases OP_IF can save a few bytes by avoiding merkle path overhead, but at the cost of exposing your other spending conditions to the world. Well-designed Taproot wallets already split conditions into separate tapleaves. This restriction only applies to Tapscripts, so P2WSH scripts (like standard Lightning channels) are completely unaffected.",
+    category: "technical",
+  },
+  {
     question: "How is this different from relay policy filters?",
     answer:
       "Relay policy (mempool filtering) only affects transaction propagation — miners can still include anything they want in blocks. BIP-110 enforces limits at the consensus level, meaning blocks containing oversized data are invalid regardless of who mines them. Policy is a suggestion; consensus is a rule.",
     category: "technical",
+  },
+  {
+    question: "Is this optional for miners?",
+    answer:
+      "During the signaling phase, miners choose whether to signal support. If 55% signal in a retarget period, the softfork locks in early. If not, mandatory signaling kicks in before the deadline — blocks that don't signal are rejected, guaranteeing lock-in. Once activated, the new rules are enforced at the consensus level: any block that violates them is rejected by all enforcing nodes, regardless of the miner's preference.",
+    category: "general",
   },
   {
     question: "What happens when the deployment expires?",
@@ -160,26 +172,27 @@ export const faqItems = [
 export const timeline = [
   {
     date: "December 1, 2025",
-    event: "Signaling Period Starts",
-    description: "Miners can begin signaling support using bit 4.",
+    event: "Signaling Begins",
+    description:
+      "Miners signal readiness using bit 4. Early lock-in if 55% of blocks signal in a retarget period (1109/2016).",
   },
   {
-    date: "~September 1, 2026",
-    event: "Maximum Activation Height",
+    date: "~August 2026",
+    event: "Mandatory Lock-in",
     description:
-      "Block 965664. Activation requires 55% miner signaling (1109/2016 blocks).",
+      "If not locked in early, mandatory signaling begins — blocks that don't signal are rejected as invalid, guaranteeing lock-in.",
   },
   {
     date: "2 weeks post lock-in",
     event: "Activation",
     description:
-      "New rules take effect for newly created UTXOs only. Pre-existing UTXOs remain permanently exempt.",
+      "New consensus rules take effect. Blocks violating these rules are rejected by all enforcing nodes. Pre-existing UTXOs remain permanently exempt.",
   },
   {
     date: "~1 year after activation",
     event: "Expiry",
     description:
-      "52,416 blocks after activation, restrictions expire automatically.",
+      "52,416 blocks after activation, all restrictions lift automatically.",
   },
 ];
 
@@ -226,7 +239,7 @@ export const tradeoffs = {
     {
       title: "Wallet Compatibility",
       description:
-        "Some wallets using Miniscript may create Tapleaves with OP_IF. UTXOs created before activation are permanently exempt, so existing funds are unaffected regardless of wallet software. The two-week grace period before activation also gives wallet developers time to update.",
+        "Some wallets like Nunchuk allow arbitrary Miniscript and may create Tapleaves with OP_IF. These wallets would need to update before activation to stop creating Tapleaves with OP_IF. UTXOs created before activation are permanently exempt, so existing funds are unaffected regardless of wallet software. Wallet developers have until mandatory lock-in (~August 2026) plus a two-week grace period to update. Even after activation, only newly created UTXOs are subject to the new rules. Updating is straightforward: split OP_IF branches into separate tapleaves, which is already best practice for Taproot.",
       severity: "low",
     },
     {
