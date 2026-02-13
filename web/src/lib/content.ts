@@ -1,6 +1,7 @@
 export const bipMeta = {
   number: 110,
   title: "Reduced Data Temporary Softfork",
+  alias: "Also referred to as RDTS (BIP-444)",
   author: "Dathon Ohm",
   status: "Draft",
   type: "Standards Track",

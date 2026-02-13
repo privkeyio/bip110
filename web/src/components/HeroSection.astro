@@ -28,10 +28,6 @@ import { bipMeta, abstract } from '@/lib/content';
       </span>
     </h1>
 
-    <p class="text-sm text-muted-foreground mb-4">
-      Also known as RDTS and BIP-444
-    </p>
-
     <p class="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
       {abstract}
     </p>
@@ -57,6 +53,10 @@ import { bipMeta, abstract } from '@/lib/content';
       <span class="hidden sm:inline">•</span>
       <span>{bipMeta.license}</span>
     </div>
+
+    <p class="mt-2 text-sm text-muted-foreground">
+      BIP-{bipMeta.number}: {bipMeta.alias}
+    </p>
 
     <!-- Scroll indicator -->
     <a href="#key" class="mt-16 animate-bounce block cursor-pointer" aria-label="Scroll to key points">
