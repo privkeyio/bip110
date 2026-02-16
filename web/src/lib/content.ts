@@ -226,6 +226,20 @@ export const installOptions = [
     status: "available",
     icon: "box",
   },
+  {
+    platform: "Parmanode",
+    description: "Simple one-click style install for Parmanode users",
+    link: "/howto#parmanode",
+    status: "available",
+    icon: "server",
+  },
+  {
+    platform: "Docker",
+    description: "For advanced users running their own Docker infrastructure",
+    link: "/howto#docker",
+    status: "available",
+    icon: "box",
+  },
 ];
 
 export const tradeoffs = {
