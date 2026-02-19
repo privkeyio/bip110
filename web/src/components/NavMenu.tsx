@@ -18,13 +18,66 @@ const pages = [
   { label: "Articles", href: "/articles" },
 ];
 
-const linkClass =
+const mobileLinkClass =
   "px-3 py-1.5 rounded-md text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
+
+function NavLink({
+  href,
+  active,
+  hasDropdown,
+  children,
+}: {
+  href: string;
+  active: boolean;
+  hasDropdown?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      className={`relative px-3 py-1.5 text-[13px] font-medium tracking-wide uppercase transition-colors duration-200 group flex items-center gap-1 ${
+        active
+          ? "text-primary"
+          : "text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {children}
+      {hasDropdown && (
+        <svg
+          className="w-3 h-3 opacity-40 group-hover:opacity-70 transition-all duration-200 group-hover:translate-y-px"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      )}
+      <span
+        className={`absolute bottom-0 left-3 right-3 h-px transition-all duration-300 ease-out ${
+          active
+            ? "bg-primary scale-x-100"
+            : "bg-foreground/40 scale-x-0 group-hover:scale-x-100"
+        }`}
+        style={{ transformOrigin: "left" }}
+      />
+    </a>
+  );
+}
 
 function DesktopNav() {
   const [showSections, setShowSections] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const menuRef = useRef<HTMLDivElement>(null);
+  const [currentPath, setCurrentPath] = useState("/");
+
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   const open = () => {
     clearTimeout(timeoutRef.current);
@@ -32,45 +85,56 @@ function DesktopNav() {
   };
 
   const close = () => {
-    timeoutRef.current = setTimeout(() => setShowSections(false), 150);
+    timeoutRef.current = setTimeout(() => setShowSections(false), 180);
   };
 
   useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
+  const isHome = currentPath === "/";
+
   return (
-    <nav className="hidden md:flex items-center gap-1">
+    <nav className="hidden md:flex items-center gap-0.5">
       <div
         ref={menuRef}
         className="relative"
         onMouseEnter={open}
         onMouseLeave={close}
       >
-        <a href="/" className={linkClass}>
+        <NavLink href="/" active={isHome} hasDropdown>
           Home
-        </a>
-        {showSections && (
-          <div className="absolute top-full left-0 pt-1">
-            <div className="w-48 bg-card border border-border/50 rounded-xl shadow-lg p-3 space-y-1">
-              {sections.map((section) => (
-                <a
-                  key={section.href}
-                  href={section.href}
-                  onClick={() => setShowSections(false)}
-                  className={`block ${linkClass}`}
-                >
-                  {section.label}
-                </a>
-              ))}
-            </div>
+        </NavLink>
+
+        <div
+          className={`absolute top-full left-0 pt-2 transition-all duration-200 ${
+            showSections
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 -translate-y-1 pointer-events-none"
+          }`}
+        >
+          <div className="w-52 bg-card/95 backdrop-blur-lg border border-border/30 rounded-xl shadow-xl shadow-black/5 dark:shadow-black/20 p-2">
+            <p className="px-3 pt-1.5 pb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/60">
+              Jump to section
+            </p>
+            {sections.map((section) => (
+              <a
+                key={section.href}
+                href={section.href}
+                onClick={() => setShowSections(false)}
+                className="block px-3 py-1.5 text-[13px] rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors duration-150"
+              >
+                {section.label}
+              </a>
+            ))}
           </div>
-        )}
+        </div>
       </div>
-      <a href="/howto" className={linkClass}>
+
+      <NavLink href="/howto" active={currentPath === "/howto"}>
         How To
-      </a>
-      <a href="/articles" className={linkClass}>
+      </NavLink>
+      <NavLink href="/articles" active={currentPath.startsWith("/articles")}>
         Articles
-      </a>
+      </NavLink>
     </nav>
   );
 }
@@ -153,7 +217,7 @@ function MobileNav() {
                   key={page.href}
                   href={page.href}
                   onClick={() => setOpen(false)}
-                  className={`block ${linkClass}`}
+                  className={`block ${mobileLinkClass}`}
                 >
                   {page.label}
                 </a>
@@ -173,7 +237,7 @@ function MobileNav() {
                   key={section.href}
                   href={section.href}
                   onClick={() => setOpen(false)}
-                  className={`block ${linkClass}`}
+                  className={`block ${mobileLinkClass}`}
                 >
                   {section.label}
                 </a>

@@ -3,9 +3,17 @@ import { NavMenu } from './NavMenu';
 import { ThemeToggle } from './ThemeToggle';
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-sm border-b border-border/20">
-  <div class="flex items-center justify-between px-4 py-2 max-w-7xl mx-auto">
-    <NavMenu client:load />
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/10">
+  <div class="flex items-center justify-between px-5 py-2.5 max-w-7xl mx-auto">
+    <div class="flex items-center gap-6">
+      <a href="/" class="flex items-center gap-2 group" aria-label="BIP-110 Home">
+        <span class="text-[15px] font-semibold tracking-tight text-foreground">
+          BIP-110
+        </span>
+      </a>
+      <div class="hidden md:block w-px h-4 bg-border/40"></div>
+      <NavMenu client:load />
+    </div>
     <ThemeToggle client:load />
   </div>
 </header>
