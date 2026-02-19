@@ -256,6 +256,8 @@ export const articles = [
     author: "Kyle Santiago",
     date: "Feb 2026",
     link: "https://privkey.substack.com/p/bitcoin-has-a-squatter-problem-bip",
+    image:
+      "https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe8ab2984-2b66-4bea-a15b-a6ff47912471_1408x768.jpeg",
   },
   {
     title: "BIP-110: The Temporary Softfork",
@@ -264,6 +266,7 @@ export const articles = [
     author: "Melvin Carvalho",
     date: "Feb 2026",
     link: "https://melvin.me/public/articles/bip110.html",
+    image: "https://melvin.me/public/articles/og-bip110.png",
   },
 ];
 
