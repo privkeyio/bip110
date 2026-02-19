@@ -10,7 +10,7 @@ import { bipMeta } from '@/lib/content';
       <div>
         BIP-{bipMeta.number}: {bipMeta.title}
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 sm:flex-wrap">
         <a
           href="https://github.com/bitcoin/bips/blob/master/bip-0110.mediawiki"
           target="_blank"
@@ -22,11 +22,11 @@ import { bipMeta } from '@/lib/content';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
-        <span>•</span>
+        <span class="hidden sm:inline">•</span>
         <span>By {bipMeta.author}</span>
-        <span>•</span>
+        <span class="hidden sm:inline">•</span>
         <span>{bipMeta.license}</span>
-        <span>•</span>
+        <span class="hidden sm:inline">•</span>
         <a
           href={bipMeta.pgpKeyUrl}
           class="font-mono text-xs hover:text-primary transition-colors"
