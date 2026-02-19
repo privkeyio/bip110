@@ -254,7 +254,7 @@ export const articles = [
     description:
       "Why a temporary soft fork is the most important thing happening in Bitcoin right now, and why the FUD about it is dead wrong.",
     author: "Kyle Santiago",
-    date: "Feb 2026",
+    date: "Feb 17, 2026",
     link: "https://privkey.substack.com/p/bitcoin-has-a-squatter-problem-bip",
     image:
       "https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe8ab2984-2b66-4bea-a15b-a6ff47912471_1408x768.jpeg",
@@ -267,6 +267,16 @@ export const articles = [
     date: "Feb 2026",
     link: "https://melvin.me/public/articles/bip110.html",
     image: "https://melvin.me/public/articles/og-bip110.png",
+  },
+  {
+    title: "BIP-110: The Corrected Analysis",
+    description:
+      "Issue #5's simulation had bugs. The real numbers are bigger and more interesting.",
+    author: "Renaud Cuny",
+    date: "Jan 29, 2026",
+    link: "https://blockspaceweekly.substack.com/p/issue-8-bip-110-the-corrected-analysis",
+    image:
+      "https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0f30a913-6cdc-49f2-9c6a-ab71f2c2c400_1420x1134.png",
   },
 ];
 
