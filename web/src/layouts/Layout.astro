@@ -2,17 +2,21 @@
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
+  ogImageWidth?: string;
+  ogImageHeight?: string;
 }
 
 const {
   title,
   description = "Temporarily limit the size of data fields at the consensus level to protect Bitcoin's purpose as money.",
+  ogImage,
+  ogImageWidth = "1200",
+  ogImageHeight = "630",
 } = Astro.props;
 const siteName = "BIP-110";
 const canonicalUrl = Astro.url.href;
-const ogImageUrl = new URL("/og.png", Astro.url).href;
-const ogImageWidth = "2372";
-const ogImageHeight = "1312";
+const ogImageUrl = new URL(ogImage ?? "/images/bip110-og-home-dark.png", Astro.url).href;
 ---
 
 <!doctype html>
