@@ -1,0 +1,11 @@
+---
+import { NavMenu } from './NavMenu';
+import { ThemeToggle } from './ThemeToggle';
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-sm border-b border-border/20">
+  <div class="flex items-center justify-between px-4 py-2 max-w-7xl mx-auto">
+    <NavMenu client:load />
+    <ThemeToggle client:load />
+  </div>
+</header>

@@ -1,24 +1,15 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ThemeToggle } from '@/components/ThemeToggle';
 ---
 
 <Layout title="How to Run BIP-110 | Installation Guide" description="Step-by-step guide to installing and running a BIP-110 enabled Bitcoin node">
   <main class="min-h-screen">
-    <div class="absolute top-6 right-6 z-20">
-      <ThemeToggle client:load />
-    </div>
+    <Header />
 
-    <section class="py-24 px-6">
+    <section class="pt-24 pb-24 px-6">
       <div class="max-w-4xl mx-auto">
-        <a href="/" class="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to BIP-110
-        </a>
-
         <h1 class="text-4xl font-bold mb-4">How to Run BIP-110</h1>
         <p class="text-xl text-muted-foreground mb-12">
           Support BIP-110 by running a node that signals for activation. Choose your preferred installation method below.
