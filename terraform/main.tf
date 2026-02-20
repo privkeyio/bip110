@@ -11,11 +11,11 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
-# Redirect www.bip110.org → bip110.org
+# Redirect www.bip110.org → bip110.org, HTTP → HTTPS
 resource "cloudflare_ruleset" "bip110_org_redirects" {
   zone_id     = var.bip110_org_zone_id
   name        = "Redirect rules"
-  description = "Redirect www to apex"
+  description = "Redirect www to apex and HTTP to HTTPS"
   kind        = "zone"
   phase       = "http_request_dynamic_redirect"
 
@@ -32,6 +32,22 @@ resource "cloudflare_ruleset" "bip110_org_redirects" {
     }
     expression  = "(http.host eq \"www.bip110.org\")"
     description = "Redirect www.bip110.org to bip110.org"
+    enabled     = true
+  }
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_value {
+        status_code = 301
+        target_url {
+          expression = "concat(\"https://\", http.host, http.request.uri.path)"
+        }
+        preserve_query_string = true
+      }
+    }
+    expression  = "(not ssl)"
+    description = "Redirect HTTP to HTTPS"
     enabled     = true
   }
 }
