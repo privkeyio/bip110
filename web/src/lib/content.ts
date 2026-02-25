@@ -250,6 +250,16 @@ export const installOptions = [
 
 export const articles = [
   {
+    title: "BIP 110 Neutralizes Bitcoin's Biggest Legal Attack Vector",
+    description:
+      "Arbitrary data on the blockchain creates untested legal exposure for every node operator on the network. BIP 110 is the protocol-level fix that closes it.",
+    author: "Kyle Santiago",
+    date: "Feb 24, 2026",
+    link: "https://privkey.substack.com/p/bip-110-neutralizes-bitcoins-biggest",
+    image:
+      "https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1696de22-fb9f-4e41-bf9d-85a2124d8af8_1408x768.jpeg",
+  },
+  {
     title: "Bitcoin Has a Squatter Problem. BIP 110 Is the Eviction Notice.",
     description:
       "Why a temporary soft fork is the most important thing happening in Bitcoin right now, and why the FUD about it is dead wrong.",

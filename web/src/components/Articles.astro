@@ -1,7 +1,7 @@
 ---
 import { articles } from '@/lib/content';
 
-const displayArticles = articles.slice(0, 3);
+const displayArticles = articles.slice(0, 4);
 ---
 
 <section id="articles" class="py-24 px-6">
@@ -64,7 +64,7 @@ const displayArticles = articles.slice(0, 3);
       ))}
     </div>
 
-    {articles.length > 3 && (
+    {articles.length > displayArticles.length && (
       <div class="text-center mt-10">
         <a
           href="/articles"
