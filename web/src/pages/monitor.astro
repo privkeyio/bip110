@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { MonitorDashboard } from "@/components/MonitorDashboard";
+import { BLAKE2B_FORK_HEIGHT, LAST_SHARED_HEIGHT } from "@/lib/chains";
 
 const stats = [
   {
@@ -30,6 +31,8 @@ const stats = [
     valueField: "signals",
   },
 ];
+
+const numberFormat = new Intl.NumberFormat("en-US");
 
 const historyRows = [
   {
@@ -98,6 +101,85 @@ const historyRows = [
           class="space-y-6"
           aria-label="BIP-110 monitor static summary"
         >
+          <section
+            id="chain-split"
+            class="scroll-mt-24 rounded-lg border border-border/50 bg-card/50 p-6"
+          >
+            <h2 class="text-xl font-semibold">
+              <a
+                href="#chain-split"
+                class="inline-flex rounded-sm text-current transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                Chain Split
+              </a>
+            </h2>
+            <p class="mt-3 text-sm text-muted-foreground">
+              The BLAKE2b proof-of-work hardfork split the chain at block {
+                numberFormat.format(BLAKE2B_FORK_HEIGHT)
+              }, where BIP-110 activated on a flag day. Block {
+                numberFormat.format(LAST_SHARED_HEIGHT)
+              } is the last block both sides share. Signaling below is the frozen
+              record from that shared chain.
+            </p>
+
+            <div class="mt-5 grid gap-4 lg:grid-cols-2">
+            <div class="rounded-lg border border-primary/40 bg-background/60 p-5">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <p class="font-semibold text-primary">BLAKE2b</p>
+                <p class="text-xs text-muted-foreground">BIP-110 enforced &middot; mempool.guide</p>
+              </div>
+              <p class="mt-3 text-3xl font-bold tracking-tight">
+                <span data-monitor-field="blake2b-tip">N/A</span>
+              </p>
+              <p
+                class="mt-1 text-sm text-muted-foreground"
+                data-monitor-field="blake2b-detail"
+              >
+                Loading chain tip
+              </p>
+              <p class="mt-3 text-sm text-muted-foreground">
+                <span class="font-medium text-foreground" data-monitor-field="blake2b-blocks-since">N/A</span>
+                blocks since the split
+              </p>
+              <div
+                class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2"
+                data-chain-blocks="blake2b"
+              >
+                <p class="col-span-full text-sm text-muted-foreground">
+                  Loading chain snapshot
+                </p>
+              </div>
+            </div>
+            <div class="rounded-lg border border-border/60 bg-background/60 p-5">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <p class="font-semibold ">SHA256d</p>
+                <p class="text-xs text-muted-foreground">mempool.space</p>
+              </div>
+              <p class="mt-3 text-3xl font-bold tracking-tight">
+                <span data-monitor-field="sha256d-tip">N/A</span>
+              </p>
+              <p
+                class="mt-1 text-sm text-muted-foreground"
+                data-monitor-field="sha256d-detail"
+              >
+                Loading chain tip
+              </p>
+              <p class="mt-3 text-sm text-muted-foreground">
+                <span class="font-medium text-foreground" data-monitor-field="sha256d-blocks-since">N/A</span>
+                blocks since the split
+              </p>
+              <div
+                class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2"
+                data-chain-blocks="sha256d"
+              >
+                <p class="col-span-full text-sm text-muted-foreground">
+                  Loading chain snapshot
+                </p>
+              </div>
+            </div>
+            </div>
+          </section>
+
           <div
             class="rounded-lg border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shadow-foreground/5 dark:bg-card/60"
           >

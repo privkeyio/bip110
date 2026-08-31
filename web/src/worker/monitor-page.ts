@@ -1,4 +1,5 @@
 import { bip110BlockGridHtml } from "./block-grid";
+import { readChainsData } from "./chains";
 import {
   ACTIVATION_THRESHOLD,
   CACHE_TTL_SECONDS,
@@ -11,7 +12,13 @@ import {
 } from "./monitor-data";
 import { readMonitorBlocks } from "./monitor-blocks";
 import { MONITOR_OG_IMAGE_PATH } from "./monitor-og-image";
-import type { MonitorBlock, MonitorData, MonitorMetadata } from "./types";
+import type {
+  ChainSide,
+  ChainsData,
+  MonitorBlock,
+  MonitorData,
+  MonitorMetadata,
+} from "./types";
 
 export const MONITOR_PAGE_PATHS = new Set(["/monitor", "/monitor/"]);
 
@@ -38,12 +45,14 @@ export async function handleMonitorPageRequest(
     return assetResponse;
   }
 
+  const chains = await readMonitorPageChains(request, ctx);
+
   try {
     const data = await readMonitorData(request, ctx);
     const blocks = await readMonitorPageBlocks(request, ctx);
-    return rewriteMonitorPage(assetResponse, request, data, blocks);
+    return rewriteMonitorPage(assetResponse, request, data, blocks, chains);
   } catch {
-    return staticMonitorPage(assetResponse);
+    return staticMonitorPage(assetResponse, chains);
   }
 }
 
@@ -60,10 +69,14 @@ function rewriteMonitorPage(
   request: Request,
   data: MonitorData,
   blocks: MonitorBlock[],
+  chains: ChainsData | null,
 ): Response {
   const metadata = monitorMetadata(request, data);
   const syncStatus = monitorSyncStatus(data);
-  const fields = monitorPageFields(data, syncStatus);
+  const fields = {
+    ...monitorPageFields(data, syncStatus),
+    ...chainFields(chains),
+  };
   let rewriter = new HTMLRewriter()
     .on(
       'meta[name="description"]',
@@ -134,6 +147,18 @@ function rewriteMonitorPage(
     .on(
       "[data-monitor-block-grid]",
       new InnerHtmlRewriter(bip110BlockGridHtml(data, blocks)),
+    )
+    .on(
+      '[data-chain-blocks="sha256d"]',
+      new InnerHtmlRewriter(
+        chainBlocksHtml(chains?.sha256d ?? null, "sha256d"),
+      ),
+    )
+    .on(
+      '[data-chain-blocks="blake2b"]',
+      new InnerHtmlRewriter(
+        chainBlocksHtml(chains?.blake2b ?? null, "blake2b"),
+      ),
     )
     .transform(response);
 
@@ -461,16 +486,122 @@ function formatUpdatedAt(value: string): string {
   }).format(date);
 }
 
-function staticMonitorPage(response: Response): Response {
-  const headers = new Headers(response.headers);
+function staticMonitorPage(
+  response: Response,
+  chains: ChainsData | null,
+): Response {
+  let rewriter = new HTMLRewriter();
+
+  for (const [field, value] of Object.entries(chainFields(chains))) {
+    rewriter = rewriter.on(
+      `[data-monitor-field="${field}"]`,
+      new InnerContentRewriter(value),
+    );
+  }
+
+  const transformed = rewriter
+    .on(
+      '[data-chain-blocks="sha256d"]',
+      new InnerHtmlRewriter(
+        chainBlocksHtml(chains?.sha256d ?? null, "sha256d"),
+      ),
+    )
+    .on(
+      '[data-chain-blocks="blake2b"]',
+      new InnerHtmlRewriter(
+        chainBlocksHtml(chains?.blake2b ?? null, "blake2b"),
+      ),
+    )
+    .transform(response);
+  const headers = new Headers(transformed.headers);
   headers.set("cache-control", `public, max-age=${CACHE_TTL_SECONDS}`);
   headers.set("x-bip110-monitor-og", "static");
+  headers.delete("etag");
 
-  return new Response(response.body, {
+  return new Response(transformed.body, {
     headers,
-    status: response.status,
-    statusText: response.statusText,
+    status: transformed.status,
+    statusText: transformed.statusText,
   });
+}
+
+async function readMonitorPageChains(
+  request: Request,
+  ctx: ExecutionContext,
+): Promise<ChainsData | null> {
+  try {
+    return await readChainsData(request, ctx);
+  } catch {
+    return null;
+  }
+}
+
+function chainFields(chains: ChainsData | null): Record<string, string> {
+  return {
+    ...sideFields("blake2b", chains?.blake2b ?? null),
+    ...sideFields("sha256d", chains?.sha256d ?? null),
+  };
+}
+
+function sideFields(
+  name: string,
+  side: ChainSide | null,
+): Record<string, string> {
+  if (!side) {
+    return {
+      [`${name}-tip`]: "N/A",
+      [`${name}-detail`]: "Chain data is unavailable right now",
+      [`${name}-blocks-since`]: "N/A",
+    };
+  }
+
+  return {
+    [`${name}-tip`]: formatInteger(side.tip),
+    [`${name}-detail`]: `Mined ${formatBlockAge(side.tipTime)}`,
+    [`${name}-blocks-since`]: formatInteger(side.blocksSinceFork),
+  };
+}
+
+function chainBlocksHtml(
+  side: ChainSide | null,
+  name: "blake2b" | "sha256d",
+): string {
+  if (!side || side.blocks.length === 0) {
+    return `<p class="col-span-full text-sm text-muted-foreground">No chain snapshot available</p>`;
+  }
+
+  const explorer =
+    name === "blake2b" ? "https://mempool.guide" : "https://mempool.space";
+  const className =
+    name === "blake2b"
+      ? "flex h-12 items-center justify-center rounded-md border border-primary/40 bg-primary/10 px-2 font-mono text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+      : "flex h-12 items-center justify-center rounded-md border border-border/60 bg-background/80 px-2 font-mono text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted";
+
+  return side.blocks
+    .map((block) => {
+      const title = [
+        `Height ${formatInteger(block.height)}`,
+        `Hash ${block.hash}`,
+        `Txs ${formatInteger(block.nTx)}`,
+      ].join("\n");
+
+      return `<a href="${explorer}/block/${escapeHtml(block.hash)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(title)}" class="${className}">${escapeHtml(formatInteger(block.height))}</a>`;
+    })
+    .join("");
+}
+
+function formatBlockAge(time: number): string {
+  const seconds = Math.max(Math.floor(Date.now() / 1000 - time), 0);
+
+  if (seconds < 60) return "just now";
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  return `${Math.floor(hours / 24)}d ago`;
 }
 
 function monitorMetadata(request: Request, data: MonitorData): MonitorMetadata {

@@ -1,3 +1,4 @@
+import { CHAINS_API_PATH, handleChainsApiRequest } from "./worker/chains";
 import {
   MONITOR_API_PATH,
   handleMonitorApiRequest,
@@ -29,6 +30,10 @@ export default {
 
     if (url.pathname === MONITOR_BLOCKS_API_PATH) {
       return handleMonitorBlocksApiRequest(request, ctx);
+    }
+
+    if (url.pathname === CHAINS_API_PATH) {
+      return handleChainsApiRequest(request, ctx);
     }
 
     if (MONITOR_PAGE_PATHS.has(url.pathname)) {

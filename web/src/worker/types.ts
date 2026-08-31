@@ -43,3 +43,26 @@ export interface MonitorMetadata {
   imageUrl: string;
   canonicalUrl: string;
 }
+
+export interface ChainBlock {
+  hash: string;
+  height: number;
+  nTx: number;
+  time: number;
+}
+
+export interface ChainSide {
+  tip: number;
+  tipHash: string;
+  tipTime: number;
+  blocksSinceFork: number;
+  blocks: ChainBlock[];
+}
+
+export interface ChainsData {
+  forkHeight: number;
+  lastSharedHeight: number;
+  blake2b: ChainSide;
+  sha256d: ChainSide | null;
+  updatedAt: string;
+}

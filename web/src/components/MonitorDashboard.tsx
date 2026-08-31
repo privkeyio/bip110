@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BLAKE2B_FORK_HEIGHT, LAST_SHARED_HEIGHT } from "@/lib/chains";
 import { cn } from "@/lib/utils";
 
 const API_URL = "/api/monitor";
@@ -22,6 +23,7 @@ const LOCAL_DEV_API_URL = "https://bip110monitor.com/api";
 const MONITOR_URL = "https://bip110monitor.com";
 const URSF_MONITOR_URL = "/ursf-monitor";
 const MEMPOOL_BLOCK_URL = "https://mempool.guide/block";
+const CHAINS_API_URL = "/api/chains";
 const CACHE_KEY = "bip110-monitor-data";
 const MONITOR_DATA_EVENT = "bip110-monitor-data";
 const CACHE_VERSION = 2;
@@ -35,7 +37,9 @@ const CURRENT_PERIOD_SECTION_ID = "current-period";
 const RULES_SECTION_ID = "rules";
 const HISTORY_SECTION_ID = "difficulty-adjustment-period-history";
 const BLOCK_GRID_SECTION_ID = "block-grid";
+const CHAIN_SECTION_ID = "chain-split";
 const MONITOR_SECTION_IDS = [
+  CHAIN_SECTION_ID,
   CURRENT_PERIOD_SECTION_ID,
   RULES_SECTION_ID,
   HISTORY_SECTION_ID,
@@ -77,6 +81,29 @@ type MonitorBlock = {
   time: number;
   nTx: number;
   signaling: boolean;
+};
+
+type ChainBlock = {
+  hash: string;
+  height: number;
+  nTx: number;
+  time: number;
+};
+
+type ChainSide = {
+  tip: number;
+  tipHash: string;
+  tipTime: number;
+  blocksSinceFork: number;
+  blocks: ChainBlock[];
+};
+
+type ChainsData = {
+  forkHeight: number;
+  lastSharedHeight: number;
+  blake2b: ChainSide;
+  sha256d: ChainSide | null;
+  updatedAt: string;
 };
 
 type PeriodGridBlock = {
@@ -379,6 +406,105 @@ function useMonitorBlocks(onBlocks: (payload: MonitorBlocksPayload) => void) {
   }, []);
 
   return blockDataStatus;
+}
+
+function isChainSide(value: unknown): value is ChainSide {
+  if (!isRecord(value)) return false;
+
+  return (
+    isFiniteNumber(value.tip) &&
+    isFiniteNumber(value.tipTime) &&
+    isFiniteNumber(value.blocksSinceFork) &&
+    typeof value.tipHash === "string" &&
+    Array.isArray(value.blocks)
+  );
+}
+
+function isChainsData(value: unknown): value is ChainsData {
+  if (!isRecord(value)) return false;
+
+  return (
+    isChainSide(value.blake2b) &&
+    (value.sha256d === null || isChainSide(value.sha256d))
+  );
+}
+
+async function fetchChains(signal?: AbortSignal) {
+  const response = await fetch(CHAINS_API_URL, { signal });
+
+  if (!response.ok) {
+    throw new Error(`Chain API returned ${response.status}`);
+  }
+
+  const payload = (await response.json()) as unknown;
+
+  if (!isChainsData(payload)) {
+    throw new Error("Chain API returned invalid data");
+  }
+
+  return payload;
+}
+
+function useChains() {
+  const [chains, setChains] = useState<ChainsData | null>(null);
+  const [chainsStatus, setChainsStatus] = useState<BlockDataStatus>("loading");
+  const lastLoadedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let controller: AbortController | null = null;
+    let loading = false;
+
+    const loadChains = async () => {
+      if (loading || !isPageVisible()) return;
+
+      loading = true;
+      controller = new AbortController();
+
+      try {
+        const payload = await fetchChains(controller.signal);
+        if (!active) return;
+
+        lastLoadedAtRef.current = Date.now();
+        setChains(payload);
+        setChainsStatus("live");
+      } catch (nextError) {
+        if (
+          nextError instanceof DOMException &&
+          nextError.name === "AbortError"
+        ) {
+          return;
+        }
+
+        if (active) {
+          setChainsStatus("unavailable");
+        }
+      } finally {
+        loading = false;
+      }
+    };
+
+    const loadChainsIfStale = () => {
+      const lastLoadedAt = lastLoadedAtRef.current;
+
+      if (!lastLoadedAt || isCacheStale(lastLoadedAt)) {
+        void loadChains();
+      }
+    };
+
+    void loadChains();
+    window.addEventListener("focus", loadChainsIfStale);
+    document.addEventListener("visibilitychange", loadChainsIfStale);
+
+    return () => {
+      active = false;
+      controller?.abort();
+      window.removeEventListener("focus", loadChainsIfStale);
+      document.removeEventListener("visibilitychange", loadChainsIfStale);
+    };
+  }, []);
+
+  return { chains, chainsStatus };
 }
 
 function formatNumber(value: number) {
@@ -959,6 +1085,113 @@ function PeriodBlockLink({
   );
 }
 
+function ChainSideColumn({
+  accent,
+  explorer,
+  label,
+  side,
+  source,
+}: {
+  accent: boolean;
+  explorer: string;
+  label: string;
+  side: ChainSide | null;
+  source: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-background/60 p-5",
+        accent ? "border-primary/40" : "border-border/60",
+      )}
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className={cn("font-semibold", accent && "text-primary")}>{label}</p>
+        <p className="text-xs text-muted-foreground">{source}</p>
+      </div>
+      <p className="mt-3 text-3xl font-bold tracking-tight">
+        {side ? formatNumber(side.tip) : "N/A"}
+      </p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {side
+          ? `Mined ${formatCacheAge(side.tipTime * 1000)}`
+          : "Chain data is unavailable right now"}
+      </p>
+      <p className="mt-3 text-sm text-muted-foreground">
+        <span className="font-medium text-foreground">
+          {side ? formatNumber(side.blocksSinceFork) : "N/A"}
+        </span>{" "}
+        blocks since the split
+      </p>
+      <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2">
+        {side && side.blocks.length > 0 ? (
+          side.blocks.map((block) => (
+            <a
+              key={block.hash}
+              href={`${explorer}/block/${block.hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`Height ${formatNumber(block.height)}\nHash ${block.hash}\nTxs ${formatNumber(block.nTx)}`}
+              className={cn(
+                "flex h-12 items-center justify-center rounded-md border px-2 font-mono text-sm font-semibold transition-colors",
+                accent
+                  ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
+                  : "border-border/60 bg-background/80 text-muted-foreground hover:bg-muted",
+              )}
+            >
+              {formatNumber(block.height)}
+            </a>
+          ))
+        ) : (
+          <p className="col-span-full text-sm text-muted-foreground">
+            No chain snapshot available
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChainSplitCard({ chains }: { chains: ChainsData | null }) {
+  return (
+    <Card
+      id={CHAIN_SECTION_ID}
+      className="scroll-mt-24 border-border/50 bg-card/50 backdrop-blur"
+    >
+      <CardHeader>
+        <CardTitle>
+          <SectionTitleLink id={CHAIN_SECTION_ID}>Chain Split</SectionTitleLink>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <p className="text-sm text-muted-foreground">
+          The BLAKE2b proof-of-work hardfork split the chain at block{" "}
+          {formatNumber(BLAKE2B_FORK_HEIGHT)}, where BIP-110 activated on a flag
+          day. Block {formatNumber(LAST_SHARED_HEIGHT)} is the last block both
+          sides share. Signaling below is the frozen record from that shared
+          chain.
+        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <ChainSideColumn
+            accent
+            explorer="https://mempool.guide"
+            label="BLAKE2b"
+            side={chains?.blake2b ?? null}
+            source="BIP-110 enforced · mempool.guide"
+          />
+          <ChainSideColumn
+            accent={false}
+            explorer="https://mempool.space"
+            label="SHA256d"
+            side={chains?.sha256d ?? null}
+            source="mempool.space"
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function SectionTitleLink({
   children,
   className,
@@ -1449,6 +1682,7 @@ export function MonitorDashboard() {
     setBlocks(payload.blocks);
   }, []);
   const blockDataStatus = useMonitorBlocks(applyMonitorBlocks);
+  const { chains } = useChains();
 
   const scrollToMonitorSection = useCallback(() => {
     const sectionId = window.location.hash.slice(1);
@@ -1540,53 +1774,59 @@ export function MonitorDashboard() {
 
   if (loading && !data) {
     return (
-      <Card className="border-border/50 bg-card/50 backdrop-blur">
-        <CardContent className="flex min-h-80 items-center justify-center">
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <RefreshCw className="size-5 animate-spin" aria-hidden="true" />
-            Loading live monitor data
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <ChainSplitCard chains={chains} />
+        <Card className="border-border/50 bg-card/50 backdrop-blur">
+          <CardContent className="flex min-h-80 items-center justify-center">
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <RefreshCw className="size-5 animate-spin" aria-hidden="true" />
+              Loading live monitor data
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   if (!data || !stats) {
     return (
-      <Card className="border-destructive/30 bg-destructive/5">
-        <CardContent className="space-y-4 pt-6">
-          <div className="flex items-start gap-3">
-            <AlertCircle
-              className="mt-0.5 size-5 shrink-0 text-destructive"
-              aria-hidden="true"
-            />
-            <div>
-              <h2 className="font-semibold">Monitor data unavailable</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {error ?? "The public monitor API did not return data."}
-              </p>
+      <div className="space-y-6">
+        <ChainSplitCard chains={chains} />
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardContent className="space-y-4 pt-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle
+                className="mt-0.5 size-5 shrink-0 text-destructive"
+                aria-hidden="true"
+              />
+              <div>
+                <h2 className="font-semibold">Monitor data unavailable</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {error ?? "The public monitor API did not return data."}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <a
-              href={MONITOR_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              Open source monitor
-              <ExternalLink className="size-4" aria-hidden="true" />
-            </a>
-            <a
-              href={URSF_MONITOR_URL}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              URSF Monitor
-              <ExternalLink className="size-4" aria-hidden="true" />
-            </a>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={MONITOR_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                Open source monitor
+                <ExternalLink className="size-4" aria-hidden="true" />
+              </a>
+              <a
+                href={URSF_MONITOR_URL}
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                URSF Monitor
+                <ExternalLink className="size-4" aria-hidden="true" />
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -1594,6 +1834,8 @@ export function MonitorDashboard() {
 
   return (
     <div className="space-y-6">
+      <ChainSplitCard chains={chains} />
+
       <div className="rounded-lg border border-border/60 bg-muted/25 px-4 py-3 shadow-sm shadow-foreground/5 dark:bg-card/60">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0 space-y-2">
